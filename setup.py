@@ -4,8 +4,8 @@ with open('README.md', 'r') as readme:
     long_description = readme.read()
 
 setuptools.setup(
-    name='env-types',
-    version='0.0.2',
+    name='envtypes',
+    version='0.1',
     author='YazeeMe',
     author_email='contact@yazee.me',
     description='Sort env types and return the needed one',

@@ -1,20 +1,14 @@
 import os
-from dotenv import load_dotenv
 
 
 class EnvTypes():
-    """Load environments from .env file and set them as needed."""
-
-    def __init__(self, field_name, **kwargs):
-        """Can configure the prefix of environment,
+    """Can configure the prefix of environment,
         delimitation between env value and env type, name used
         for different env types: strings, integers, booleans,
         lists, tuples and dictionaries.
         """
-        load_dotenv()
 
-        self.field_name = field_name.upper()
-
+    def __init__(self, **kwargs):
         # Field Delimitation
         if not kwargs.get('field_del'):
             self.field_del = '_'
@@ -33,25 +27,25 @@ class EnvTypes():
         else:
             self.prefix = kwargs.get('prefix').upper() + self.field_del
 
-        # # Strings
+        # Strings
         if not kwargs.get('env_str'):
             self.env_str = 'str'
         else:
             self.env_str = kwargs.get('env_str').lower()
 
-        # # Integers
+        # Integers
         if not kwargs.get('env_int'):
             self.env_int = 'int'
         else:
             self.env_int = kwargs.get('env_int').lower()
 
-        # # Booleans
+        # Booleans
         if not kwargs.get('env_bool'):
             self.env_bool = 'bool'
         else:
             self.env_bool = kwargs.get('env_bool').lower()
 
-        # # Lists
+        # Lists
         if not kwargs.get('env_list'):
             self.env_list = 'list'
         else:
@@ -87,28 +81,24 @@ class EnvTypes():
         else:
             self.dict_del = kwargs.get('dict_del')
 
-        # None Value
-        if not kwargs.get('none_value'):
-            self.none_value = 'none'
-        else:
-            self.none_value = kwargs.get('none_value').lower()
-
         # Empty Value
         if not kwargs.get('empty_value'):
             self.empty_value = 'empty'
         else:
-            self.empty_value = kwargs.get('empty_value').lower()
+            self.empty_value = kwargs.get('empty_value')
 
-        # Field
+        # None Value
+        if not kwargs.get('none_value'):
+            self.none_value = 'none'
+        else:
+            self.none_value = kwargs.get('none_value')
+
+    def set_env(self, field_name):
+        self.field_name = field_name.upper()
         self.field = self.prefix + self.field_name
-
-        # Value
         self.value = os.getenv(self.field).split(self.value_del)[0]
-
-        # Object type
         self.object_type = os.getenv(self.field).split(self.value_del)[1]
 
-    def set_env(self):
         if self.object_type == self.env_str:
             if self.value == self.none_value:
                 return None
