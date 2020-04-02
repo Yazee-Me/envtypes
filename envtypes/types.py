@@ -93,39 +93,48 @@ class EnvTypes():
         else:
             self.none_value = kwargs.get('none_value')
 
+    def bulk_envs(self, field_name, envs):
+        self.env_value_list = []
+        for self.env in range(1, envs+1):
+            self.item = self.set_env(f'{field_name}_{self.env}')
+            self.env_value_list.append(self.item)
+        return self.env_value_list
+
     def set_env(self, field_name):
         self.field_name = field_name.upper()
         self.field = self.prefix + self.field_name
         self.value = os.getenv(self.field).split(self.value_del)[0]
-        self.object_type = os.getenv(self.field).split(self.value_del)[1]
+        self.env_type = os.getenv(self.field).split(self.value_del)[1]
+        return self.extract_value()
 
-        if self.object_type == self.env_str:
+    def extract_value(self):
+        if self.env_type == self.env_str:
             if self.value == self.none_value:
                 return None
             elif self.value == self.empty_value:
                 return ''
             return str(self.value)
-        elif self.object_type == self.env_int:
+        elif self.env_type == self.env_int:
             return int(self.value)
-        elif self.object_type == self.env_bool:
+        elif self.env_type == self.env_bool:
             if self.value == 'True':
                 return True
             return False
-        elif self.object_type == self.env_list:
+        elif self.env_type == self.env_list:
             if self.value.__contains__(self.list_del):
                 return list(self.value.split(self.list_del))
             else:
                 if self.value == self.empty_value:
                     return []
                 return [self.value]
-        elif self.object_type == self.env_tuple:
+        elif self.env_type == self.env_tuple:
             if self.value.__contains__(self.tuple_del):
                 return tuple(self.value.split(self.tuple_del))
             else:
                 if self.value == self.empty_value:
                     return tuple()
                 return tuple(self.value)
-        elif self.object_type == self.env_dict:
+        elif self.env_type == self.env_dict:
             if self.value == self.empty_value:
                 return {}
             self.key = self.value.split(self.dict_del)[0]
