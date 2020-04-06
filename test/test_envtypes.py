@@ -70,6 +70,14 @@ class ConfigTypes(TestCase):
         self.assertEqual(self.config.set_env('Tuple'), ('third', 'fourth'))
         self.assertEqual(self.config.set_env('DicT'), {'key': 'value'})
 
-    def test_counts(self):
+    def test_bulk_envs(self):
         self.assertListEqual(self.config.bulk_envs('app', 5),
                              ['1', '2', '3', '4', '5'])
+
+    def test_execptions(self):
+        self.assertEqual(self.config.set_env(
+            'inferior'), 'The field "inferior" was not found in .env file.')
+        self.assertEqual(self.config.set_env(
+            'test_value_del'), 'The delimiter "; _" was not found in field value.')
+        self.assertEqual(self.config.set_env('test_env_type'),
+                         'The "strr" was not defined as a type.')
