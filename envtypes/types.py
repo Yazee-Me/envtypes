@@ -108,11 +108,14 @@ class EnvTypes():
             if self.field_value.find(self.value_del) is not -1:
                 self.value = os.getenv(self.field).split(self.value_del)[0]
                 self.env_type = os.getenv(self.field).split(self.value_del)[1]
+                self.env_type = self.env_type.lower()
                 return self.extract_value()
             else:
-                return f'The delimiter "{self.value_del}" was not found in field value.'
+                raise NameError(
+                    f'Delimiter "{self.value_del}" was not found in "{self.field}".')
         else:
-            return f'The field "{field_name}" was not found in .env file.'
+            raise NameError(
+                f'The field "{field_name}" was not found in .env file.')
 
     def extract_value(self):
         if self.env_type == self.env_str:
@@ -148,4 +151,5 @@ class EnvTypes():
             self.value = self.value.split(self.dict_del)[1]
             return {self.key: self.value}
         else:
-            return f'The "{self.env_type}" was not defined as a type.'
+            raise NameError(
+                f'The "{self.env_type}" was not defined as a type. Error was found in field "{self.field}".')
