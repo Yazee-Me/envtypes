@@ -8,8 +8,9 @@ load_dotenv()
 class ConfigTypes(TestCase):
     def setUp(self):
         self.custom = EnvTypes(field_del='---',
+                               use_prefix=True,
+                               prefix='dJanGo',
                                value_del='___',
-                               prefix='pyTHON',
                                env_str='sTr',
                                env_int='INt',
                                env_bool='BOOl',
@@ -21,6 +22,8 @@ class ConfigTypes(TestCase):
                                dict_del=':=:',
                                empty_value='naDa',
                                none_value='nONE')
+        self.custom_2 = EnvTypes(use_prefix=False,
+                                 prefix=None)
         self.config = EnvTypes()
 
     def test_instance(self):
@@ -29,8 +32,9 @@ class ConfigTypes(TestCase):
 
     def test_custom(self):
         self.assertEqual(self.custom.field_del, '---')
+        self.assertTrue(self.custom.use_prefix)
+        self.assertEqual(self.custom.prefix, 'DJANGO---')
         self.assertEqual(self.custom.value_del, '___')
-        self.assertEqual(self.custom.prefix, 'PYTHON---')
         self.assertEqual(self.custom.env_str, 'str')
         self.assertEqual(self.custom.env_int, 'int')
         self.assertEqual(self.custom.env_bool, 'bool')
@@ -43,10 +47,15 @@ class ConfigTypes(TestCase):
         self.assertEqual(self.custom.empty_value, 'naDa')
         self.assertEqual(self.custom.none_value, 'nONE')
 
+    def test_custom_2(self):
+        self.assertFalse(self.custom_2.use_prefix)
+        self.assertEqual(self.custom_2.prefix, None)
+
     def test_config(self):
         self.assertEqual(self.config.field_del, '_')
         self.assertEqual(self.config.value_del, '; _')
-        self.assertEqual(self.config.prefix, 'DJANGO_')
+        self.assertTrue(self.config.use_prefix)
+        self.assertEqual(self.config.prefix, 'PYTHON_')
         self.assertEqual(self.config.env_str, 'str')
         self.assertEqual(self.config.env_int, 'int')
         self.assertEqual(self.config.env_bool, 'bool')
@@ -60,29 +69,62 @@ class ConfigTypes(TestCase):
         self.assertEqual(self.config.none_value, 'none')
 
     def test_env_types(self):
-        self.assertEqual(self.config.set_env('test_Env_type_stR'), 'test')
-        self.assertEqual(self.config.set_env('test_Env_type_inT'), 178)
-        self.assertFalse(self.config.set_env('test_Env_TYPE_booL'), False)
-        self.assertTrue(self.config.set_env('test_Env_type_BooL_t'), True)
+        self.assertEqual(self.config.set_env('test_env_type_str'), 'test')
+        self.assertEqual(self.config.set_env('test_env_type_int'), 178)
+        self.assertFalse(self.config.set_env('test_env_type_bool'))
+        self.assertTrue(self.config.set_env('test_env_type_bool_t'))
+        # list
         self.assertEqual(self.config.set_env(
-            'test_Env_type_LIST'), [1, 'two'])
+            'test_env_type_list_single'), ['single list'])
+        self.assertEqual(self.config.set_env('test_env_type_list_str'), [
+                         'string one', 'string two'])
         self.assertEqual(self.config.set_env(
-            'test_Env_type_tuPLE'), ('three', 4))
+            'test_env_type_list_int'), [1, 3, 5, 7])
         self.assertEqual(self.config.set_env(
-            'test_Env_type_DicT'), {'key': 'value'})
-
-    def test_empty_none(self):
-        pass
-
-    def test_errors(self):
-        #     self.assertEqual(self.config.set_env(
-        #         'test_value_del'), 'Delimiter "; _" was not found in field "DJANGO_TEST_VALUE_DEL".')
-        #     self.assertEqual(self.config.set_env(
-        #         'inferior'), 'The field "DJANGO_INFERIOR" was not found in .env file.')
-        #     self.assertEqual(self.config.set_env('test_env_type'),
-        #                      'The "strr" was not defined as a type. Error was found in field "DJANGO_TEST_ENV_TYPE')
-        pass
+            'test_env_type_list_bool'), [True, False, False])
+        # tuple
+        self.assertEqual(self.config.set_env(
+            'test_env_type_tuple_single'), ('single tuple'))
+        self.assertEqual(self.config.set_env(
+            'test_env_type_tuple_str'), ('string three', 'string four'))
+        self.assertEqual(self.config.set_env(
+            'test_env_type_tuple_int'), (2, 4, 6, 8))
+        self.assertEqual(self.config.set_env(
+            'test_env_type_tuple_bool'), (False, False, True))
+        # dictionary
+        self.assertEqual(self.config.set_env(
+            'test_env_type_dict_str'), {'string': 'value'})
+        self.assertEqual(self.config.set_env(
+            'test_env_type_dict_bool'), {'integer': 48})
+        self.assertEqual(self.config.set_env(
+            'test_env_type_dict_bool'), {'boolean': False})
 
     def test_bulk_envs(self):
-        self.assertListEqual(self.config.bulk_envs('tEST_app', 5),
-                             ['1', '2', '3', '4', '5'])
+        # list
+        self.assertEqual(self.config.bulk_envs(
+            'test_bulk_list_str', 'list', 3), ['STR 1', 'STR 2', 'STR 3'])
+        self.assertEqual(self.config.bulk_envs(
+            'test_bulk_list_int', 'list', 3), [1, 2, 3])
+        self.assertEqual(self.config.bulk_envs(
+            'test_bulk_list_bool', 'list', 2), [True, False])
+        self.assertEqual(self.config.bulk_envs(
+            'test_bulk_list_mixed', 'list', 3), ['String ONE', 14, False])
+        # tuple
+        self.assertEqual(self.config.bulk_envs(
+            'test_bulk_tuple_str', 'tuple', 3), ('STR 3', 'STR 2', 'STR 1'))
+        self.assertEqual(self.config.bulk_envs(
+            'test_bulk_tuple_int', 'tuple', 3), (3, 2, 1))
+        self.assertEqual(self.config.bulk_envs(
+            'test_bulk_tuple_bool', 'tuple', 2), (False, True))
+        self.assertEqual(self.config.bulk_envs(
+            'test_bulk_tuple_mixed', 'tuple', 3), ('String TWO', 24, False))
+
+    def test_empty_none(self):
+        self.assertEqual(self.config.set_env('test_empty_str'), '')
+        self.assertEqual(self.config.set_env('test_none_str'), None)
+        self.assertEqual(self.config.set_env('test_empty_list'), [])
+        self.assertEqual(self.config.set_env('test_empty_tuple'), ())
+        self.assertEqual(self.config.set_env('test_empty_dict'), {})
+
+    def test_errors(self):
+        pass
