@@ -18,7 +18,7 @@ class EnvTypes():
             if isinstance(kwargs.get('field_del'), str):
                 self.field_del = kwargs.get('field_del')
             else:
-                raise ValueError('"field_del" must be a string.')
+                raise ValueError('The "field_del" value must be a string.')
 
         # Use prefix
         if kwargs.get('use_prefix') is None:
@@ -27,7 +27,7 @@ class EnvTypes():
             if isinstance(kwargs.get('use_prefix'), bool):
                 self.use_prefix = kwargs.get('use_prefix')
             else:
-                raise ValueError('"use_prefix" must be a boolean.')
+                raise ValueError('The "use_prefix" value must be a boolean.')
 
         # Prefix
         if self.use_prefix:

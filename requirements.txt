@@ -1,0 +1,9 @@
+Package       Version
+------------- -------
+autopep8      1.5.4
+pip           20.2.3
+pycodestyle   2.6.0
+python-dotenv 0.14.0
+setuptools    49.6.0
+toml          0.10.1
+wheel         0.35.1
