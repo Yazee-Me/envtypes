@@ -1,4 +1,4 @@
-name: Upload Pakage to PYPI
+name: Test the package
 on:
   push:
     branches:
