@@ -1,10 +1,8 @@
 name: Upload the package to PYPI
 
 on:
-  push:
-    branches: [dev]
-  # release:
-  #   types: [created]
+  release:
+    types: [created]
 
 jobs:
   deploy:
