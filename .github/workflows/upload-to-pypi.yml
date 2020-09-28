@@ -1,8 +1,8 @@
 name: Upload the package to PYPI
 
 on:
-  push:
-    - 'v*'
+  release:
+    types: [published]
 
 jobs:
   deploy:
