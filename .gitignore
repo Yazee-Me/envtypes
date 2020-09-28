@@ -129,3 +129,5 @@ dmypy.json
 
 # IDE
 .vscode/
+
+test/test.py
