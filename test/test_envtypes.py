@@ -1,6 +1,6 @@
-import unittest
-from envtypes import EnvTypes
 from dotenv import load_dotenv
+from envtypes import EnvTypes
+import unittest
 
 load_dotenv()
 
@@ -52,6 +52,10 @@ class Defaults(unittest.TestCase):
 
     def test_argument_name(self):
         self.assertTrue(self.default.check_argument_name('test_1'))
+
+    def test_prefix(self):
+        self.assertEqual(self.default.check_prefix(
+            'something'), 'PYTHON_SOMETHING')
 
     def test_env_existence(self):
         self.assertTrue(self.default.check_env_existence(
@@ -115,3 +119,15 @@ class Defaults(unittest.TestCase):
     def test_set_env_dict(self):
         self.assertEqual(self.default.set_env(
             "dictionary"), {'dict_key_1': 'dict_string_value', 'dict_key_2': False, 'dict_key_3': 143})
+
+    def test_set_bulk_envs(self):
+        self.assertEqual(self.default.set_bulk_envs('env', 'list'), [
+                         'string_1', 'string_2',
+                         ['string_list', 1, True],
+                         ('string_tuple', 2, False),
+                         {'string': 'string_dict', 'integer': 3, 'boolean': False},
+                         6, False])
+
+    def test_set_bulk_envs_two(self):
+        self.assertEqual(self.default.set_bulk_envs('env_two', 'TUPLE'), (
+                         'string_1', 'string_2', 'string_3'))

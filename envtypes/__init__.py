@@ -190,16 +190,22 @@ class EnvTypes():
                         return True
                     else:
                         raise ValueError(
-                            f'The value of the "field_name" argument from "set_env" methond must be a string. "{field_name}" is not a string.')
+                            f'The value of the "field_name" argument from methonds "set_env" and "set_bulk_env" must be a string. "{field_name}" is not a string.')
                 else:
                     raise ValueError(
-                        f'The value of the "field_name" argument from "set_env" method can not contains spaces.')
+                        f'The value of the "field_name" argument from methonds "set_env" and "set_bulk_env" can not contains spaces.')
             else:
                 raise ValueError(
-                    f'The value of the "field_name" argument from "set_env" method can not be empty.')
+                    f'The value of the "field_name" argument from methonds "set_env" and "set_bulk_env" can not be empty.')
         else:
             raise ValueError(
-                f'The value of the "field_name" argument from "set_env" method can not be "None".')
+                f'The value of the "field_name" argument from methonds "set_env" and "set_bulk_env" can not be "None".')
+
+    def check_prefix(self, field_name):
+        if self.use_prefix['value']:
+            return f"{self.prefix['value']}{field_name.upper().strip()}"
+        else:
+            return field_name.upper().strip()
 
     def check_env_existence(self, field_name, field_value):
         if field_value is not None:
@@ -371,11 +377,25 @@ class EnvTypes():
 
     def set_env(self, field_name):
         if self.check_argument_name(field_name):
-            if self.use_prefix['value']:
-                self.field_name = f"{self.prefix['value']}{field_name.upper().strip()}"
-            else:
-                self.field_name = field_name.upper().strip()
-            self.value = os.getenv(self.field_name)
-            if self.check_env_existence(self.field_name, self.value):
-                return self.extract_value(
-                    self.field_name, self.value)
+            field_name = self.check_prefix(field_name)
+            value = os.getenv(field_name)
+            if self.check_env_existence(field_name, value):
+                return self.extract_value(field_name, value)
+
+    def set_bulk_envs(self, field_name, result_type):
+        result = []
+        index = 1
+        while True:
+            try:
+                value = self.set_env(f'{field_name}_{index}')
+                result.append(value)
+                index += 1
+            except ValueError:
+                break
+        if result_type.lower().strip() == self.env_list['value']:
+            return result
+        elif result_type.lower().strip() == self.env_tuple['value']:
+            return tuple(result)
+        else:
+            raise ValueError(
+                f'The value of the "result_type" argument from "set_bulk_envs" can only be "{self.env_list["value"]}" or "{self.env_tuple["value"]}".')
