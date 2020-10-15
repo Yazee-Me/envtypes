@@ -5,7 +5,7 @@ with open('README.md', 'r') as readme:
 
 setuptools.setup(
     name='envtypes',
-    version='0.3.0',
+    version='0.3.1',
     author='YazeeMe',
     author_email='ionut.badea@yazee.me',
     description="Return the values of the envs with the correct type.",
