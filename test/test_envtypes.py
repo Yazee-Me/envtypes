@@ -35,7 +35,8 @@ class CustomArguments(unittest.TestCase):
                        ',-,', 'dict', '::', ':=: ', ';;', 'naDa', 'nONE']
         for index in self.values:
             self.assertEqual(
-                self.custom.arguments[self.values.index(index)]['value'], index)
+                self.custom.arguments[self.values.index(index)]['value'],
+                index)
 
 
 class Defaults(unittest.TestCase):
@@ -44,11 +45,12 @@ class Defaults(unittest.TestCase):
 
     def test_default_arguments(self):
         self.values = [True, True, 'PYTHON_', ';__', 'str', 'int', 'bool',
-                       'True', 'False', 'list', ' - ', ', ', 'tuple', ' - ', ', ',
-                       'dict', ': ', ' - ', ', ', 'empty', 'none']
+                       'True', 'False', 'list', ' - ', ', ', 'tuple', ' - ',
+                       ', ', 'dict', ': ', ' - ', ', ', 'empty', 'none']
         for index in self.values:
             self.assertEqual(
-                self.default.arguments[self.values.index(index)]['value'], index)
+                self.default.arguments[self.values.index(index)]['value'],
+                index)
 
     def test_argument_name(self):
         self.assertTrue(self.default.check_argument_name('test_1'))
@@ -82,7 +84,8 @@ class Defaults(unittest.TestCase):
 
     def test_convert_value_str(self):
         self.assertEqual(self.default.convert_value(
-            'test_11', 'something_convert_value_str', 'str'), 'something_convert_value_str')
+            'test_11', 'something_convert_value_str', 'str'),
+            'something_convert_value_str')
 
     def test_convert_value_int(self):
         self.assertEqual(self.default.convert_value(
@@ -92,9 +95,101 @@ class Defaults(unittest.TestCase):
         self.assertEqual(self.default.convert_value(
             'test_13', 'False', 'bool'), False)
 
-    def test_extract_value(self):
+    def test_extract_value_str(self):
         self.assertEqual(self.default.extract_value(
-            'test_14', 'some string from environment;__str'), 'some string from environment')
+            'test_14', 'some string from environment;__str'),
+            'some string from environment')
+
+    def test_extract_value_int(self):
+        self.assertEqual(self.default.extract_value(
+            'test_15', '234;__int'), 234)
+
+    def test_extract_value_bool(self):
+        self.assertEqual(self.default.extract_value(
+            'test_16', 'True;__bool'), True)
+
+    def test_extract_value_list(self):
+        self.assertEqual(self.default.extract_value(
+            'test_17', 'some - str, 123 - int, False - bool;__list'), [
+                'some', 123, False])
+
+    def test_extract_value_tuple(self):
+        self.assertEqual(self.default.extract_value(
+            'test_18', 'some - str, 123 - int, False - bool;__tuple'), (
+                'some', 123, False))
+
+    def test_extract_value_dict(self):
+        self.assertEqual(self.default.extract_value(
+            'test_19', 'key_1: some - str, key_2: 123 - int, key_3: False - bool;__dict'), {
+                'key_1': 'some', 'key_2': 123, 'key_3': False})
+
+    def test_extract_value_str_empty(self):
+        self.assertEqual(self.default.extract_value(
+            'test_20', 'empty;__str'), '')
+
+    def test_extract_value_int_empty(self):
+        self.assertEqual(self.default.extract_value(
+            'test_21', 'empty;__int'), '')
+
+    def test_extract_value_bool_empty(self):
+        self.assertEqual(self.default.extract_value(
+            'test_22', 'empty;__bool'), '')
+
+    def test_extract_value_list_empty(self):
+        self.assertEqual(self.default.extract_value(
+            'test_23', 'empty;__list'), [])
+
+    def test_extract_value_tuple_empty(self):
+        self.assertEqual(self.default.extract_value(
+            'test_24', 'empty;__tuple'), ())
+
+    def test_extract_value_dict_empty(self):
+        self.assertEqual(self.default.extract_value(
+            'test_25', 'empty;__dict'), {})
+
+    def test_extract_value_str_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_26', 'none;__str'), None)
+
+    def test_extract_value_int_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_27', 'none;__int'), None)
+
+    def test_extract_value_bool_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_28', 'none;__bool'), None)
+
+    def test_extract_value_list_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_29', 'none;__list'), None)
+
+    def test_extract_value_tuple_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_30', 'none;__tuple'), None)
+
+    def test_extract_value_str_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_31', 'none;__str'), None)
+
+    def test_extract_value_int_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_32', 'none;__int'), None)
+
+    def test_extract_value_bool_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_33', 'none;__bool'), None)
+
+    def test_extract_value_list_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_34', 'none;__list'), None)
+
+    def test_extract_value_tuple_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_35', 'none;__tuple'), None)
+
+    def test_extract_value_dict_none(self):
+        self.assertEqual(self.default.extract_value(
+            'test_36', 'none;__dict'), None)
 
     def test_set_env_str(self):
         self.assertEqual(self.default.set_env(
@@ -118,16 +213,69 @@ class Defaults(unittest.TestCase):
 
     def test_set_env_dict(self):
         self.assertEqual(self.default.set_env(
-            "dictionary"), {'dict_key_1': 'dict_string_value', 'dict_key_2': False, 'dict_key_3': 143})
+            "dictionary"), {'dict_key_1': 'dict_string_value',
+                            'dict_key_2': False, 'dict_key_3': 143})
 
-    def test_set_bulk_envs(self):
-        self.assertEqual(self.default.set_bulk_envs('env', 'list'), [
-                         'string_1', 'string_2',
+    def test_set_env_str_empty(self):
+        self.assertEqual(self.default.set_env(
+            "string_empty"), '')
+
+    def test_set_env_int_empty(self):
+        self.assertEqual(self.default.set_env(
+            "integer_empty"), '')
+
+    def test_set_env_bool_empty(self):
+        self.assertEqual(self.default.set_env(
+            "boolean_empty"), '')
+
+    def test_set_env_list_empty(self):
+        self.assertEqual(self.default.set_env(
+            "list_empty"), [])
+
+    def test_set_env_tuple_empty(self):
+        self.assertEqual(self.default.set_env(
+            "tuple_empty"), ())
+
+    def test_set_env_dict_empty(self):
+        self.assertEqual(self.default.set_env(
+            "dictionary_empty"), {})
+
+    def test_set_env_str_none(self):
+        self.assertEqual(self.default.set_env(
+            "string_none"), None)
+
+    def test_set_env_int_none(self):
+        self.assertEqual(self.default.set_env(
+            "integer_none"), None)
+
+    def test_set_env_bool_none(self):
+        self.assertEqual(self.default.set_env(
+            "boolean_none"), None)
+
+    def test_set_env_list_none(self):
+        self.assertEqual(self.default.set_env(
+            "list_none"), None)
+
+    def test_set_env_tuple_none(self):
+        self.assertEqual(self.default.set_env(
+            "tuple_none"), None)
+
+    def test_set_env_dict_none(self):
+        self.assertEqual(self.default.set_env(
+            "dictionary_none"), None)
+
+    def test_set_bulk_envs_list(self):
+        self.assertEqual(self.default.set_bulk_envs('envs_list', 'list'), [
+                         'string_1', 6, False,
                          ['string_list', 1, True],
                          ('string_tuple', 2, False),
-                         {'string': 'string_dict', 'integer': 3, 'boolean': False},
-                         6, False])
+                         {'string': 'string_dict',
+                          'integer': 3, 'boolean': False}])
 
-    def test_set_bulk_envs_two(self):
-        self.assertEqual(self.default.set_bulk_envs('env_two', 'TUPLE'), (
-                         'string_1', 'string_2', 'string_3'))
+    def test_set_bulk_envs_tuple(self):
+        self.assertEqual(self.default.set_bulk_envs('envs_tuple', 'tuple'), (
+                         'string_1', 6, False,
+                         ['string_list', 1, True],
+                         ('string_tuple', 2, False),
+                         {'string': 'string_dict',
+                          'integer': 3, 'boolean': False}))

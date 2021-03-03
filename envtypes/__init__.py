@@ -7,7 +7,8 @@ class EnvTypes():
        the prefix value for fields, delimitation between value and type,
        delimitation between list and tuple values, delimitation between
        dictionary key and value, name used for different environment types:
-       strings, integers, booleans, lists, tuples and dictionaries.
+       strings, integers, booleans, lists, tuples and dictionaries,
+       boolean true or false values empty and none values.
        """
 
     def __init__(self, **kwargs):
@@ -314,28 +315,37 @@ class EnvTypes():
 
     def extract_value(self, field_name, field_value):
         if self.check_env_del(field_name, field_value):
-            self.field_value = field_value.split(
+            local_field_value = field_value.split(
                 self.env_del['value'])[0].strip()
             if self.case_sensitive:
-                self.field_type = field_value.split(
+                local_field_type = field_value.split(
                     self.env_del['value'])[1].strip()
             else:
-                self.field_type = field_value.split(
+                local_field_type = field_value.split(
                     self.env_del['value'])[1].lower().strip()
-            if self.field_value == self.empty_value['value']:
-                return ''
-            elif self.field_value == self.none_value['value']:
+            if local_field_value == self.empty_value['value']:
+                if (local_field_type == self.env_str['value'] or
+                    local_field_type == self.env_int['value'] or
+                        local_field_type == self.env_bool['value']):
+                    return ''
+                elif local_field_type == self.env_list['value']:
+                    return []
+                elif local_field_type == self.env_tuple['value']:
+                    return ()
+                elif local_field_type == self.env_dict['value']:
+                    return {}
+            elif local_field_value == self.none_value['value']:
                 return None
             else:
-                if (self.field_type == self.env_str['value'] or
-                    self.field_type == self.env_int['value'] or
-                        self.field_type == self.env_bool['value']):
+                if (local_field_type == self.env_str['value'] or
+                    local_field_type == self.env_int['value'] or
+                        local_field_type == self.env_bool['value']):
                     return self.convert_value(
-                        field_name, self.field_value, self.field_type)
-                elif self.field_type == self.env_list['value']:
+                        field_name, local_field_value, local_field_type)
+                elif local_field_type == self.env_list['value']:
                     the_list = []
-                    if self.check_list_dels(field_name, self.field_value):
-                        list_items = self.field_value.split(
+                    if self.check_list_dels(field_name, local_field_value):
+                        list_items = local_field_value.split(
                             self.list_type_del['value'])
                         for list_item in list_items:
                             list_item_value = list_item.split(
@@ -345,10 +355,10 @@ class EnvTypes():
                             the_list.append(self.convert_value(
                                 field_name, list_item_value, list_item_type))
                         return the_list
-                elif self.field_type == self.env_tuple['value']:
+                elif local_field_type == self.env_tuple['value']:
                     the_tuple = []
-                    if self.check_tuple_dels(field_name, self.field_value):
-                        tuple_items = self.field_value.split(
+                    if self.check_tuple_dels(field_name, local_field_value):
+                        tuple_items = local_field_value.split(
                             self.tuple_type_del['value'])
                         for tuple_item in tuple_items:
                             tuple_item_value = tuple_item.split(
@@ -358,10 +368,10 @@ class EnvTypes():
                             the_tuple.append(self.convert_value(
                                 field_name, tuple_item_value, tuple_item_type))
                         return tuple(the_tuple)
-                elif self.field_type == self.env_dict['value']:
+                elif local_field_type == self.env_dict['value']:
                     the_dict = {}
-                    if self.check_dict_dels(field_name, self.field_value):
-                        dict_items = self.field_value.split(
+                    if self.check_dict_dels(field_name, local_field_value):
+                        dict_items = local_field_value.split(
                             self.dict_type_del['value'])
                         for dict_item in dict_items:
                             dict_item_key = dict_item.split(
@@ -398,4 +408,6 @@ class EnvTypes():
             return tuple(result)
         else:
             raise ValueError(
-                f'The value of the "result_type" argument from "set_bulk_envs" can only be "{self.env_list["value"]}" or "{self.env_tuple["value"]}".')
+                f'''The value of the "result_type" argument from
+                "set_bulk_envs" can only be "{self.env_list["value"]}" or
+                "{self.env_tuple["value"]}".''')
